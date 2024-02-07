@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.code.Entity.DhabaModel;
@@ -18,8 +19,6 @@ import com.code.payload.DhabaModelDto;
 import com.code.request.LocationRequest;
 import com.code.request.SpecificLocationRequest;
 import com.code.service.DhabaService;
-
-
 
 import lombok.RequiredArgsConstructor;
 
@@ -73,5 +72,27 @@ public class DhabaAPIController {
 			return new ResponseEntity<List<DhabaModel>>(findDhabaShopsWithinArea, HttpStatus.FOUND);
 		}
 	}
+
+	@GetMapping("/regex/{str}/{latitude}/{longitude}/{distance}")
+	public ResponseEntity<List<DhabaModel>> findingRegex(@PathVariable String str, @PathVariable double latitude,
+			@PathVariable double longitude, @PathVariable double distance) {
+		List<DhabaModel> filterOut = null;
+		filterOut = this.dhabaService.filterOut(str, latitude, longitude, distance);
+		if (filterOut == null) {
+			// return new ResponseEntity<>(filterOut, HttpStatus.FOUND);
+			throw new RuntimeException("data not found");
+		}
+		return new ResponseEntity<>(filterOut, HttpStatus.FOUND);
+	}
+
+	 @GetMapping("/gettingListOfItems")
+	    public ResponseEntity<List<DhabaModel>> gettingListOfItems(@RequestParam(value = "items") List<String> items) {
+	        List<DhabaModel> gettingSpecificItem = this.dhabaService.gettingSpecificItem(items);
+	        if (!gettingSpecificItem.isEmpty()) {
+	            return new ResponseEntity<>(gettingSpecificItem, HttpStatus.OK);
+	        } else {
+	            throw new RuntimeException("Items in the list were not found");
+	        }
+	    }
 
 }

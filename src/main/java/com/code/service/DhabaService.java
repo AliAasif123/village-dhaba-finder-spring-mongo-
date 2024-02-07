@@ -1,5 +1,6 @@
 package com.code.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.geo.Box;
@@ -26,8 +27,8 @@ import lombok.RequiredArgsConstructor;
 public class DhabaService {
 
 	private final Dhabarepositories dhabarepositories;
-	
-    private final MongoTemplate mongoTemplate;
+
+	private final MongoTemplate mongoTemplate;
 
 	private final Converion converion;
 
@@ -75,11 +76,28 @@ public class DhabaService {
 	}
 
 	public List<DhabaModel> findDhabaShopsWithinArea(SpecificLocationRequest locationrequest) {
-        Query query = new Query(Criteria.where("location").within(
-                new Box(new Point(locationrequest.minLongitude, locationrequest.minLatitude),
-                        new Point(locationrequest.maxLongitude, locationrequest.maxLatitude))
-        ));
-        return mongoTemplate.find(query, DhabaModel.class);
-    }
+		Query query = new Query(Criteria.where("location")
+				.within(new Box(new Point(locationrequest.minLongitude, locationrequest.minLatitude),
+						new Point(locationrequest.maxLongitude, locationrequest.maxLatitude))));
+		return mongoTemplate.find(query, DhabaModel.class);
+	}
 
+//	Retrieve documents where the name starts with "O" and the location is within a specific geographical area.
+	public List<DhabaModel> filterOut(String str, double latitude, double longitude, double distance) {
+		Criteria regex = Criteria.where("name").regex(".*O.*").and("location")
+				.nearSphere(new Point(latitude, longitude)).maxDistance(distance);
+		return mongoTemplate.find(new Query().addCriteria(regex), DhabaModel.class);
+	}
+
+	// Get all documents where the items list contains both "Chocolate Cake" ,
+	// "Chocolate Cake" and Truffles
+//	public List<DhabaModel> gettingSpecificItem(List<String> items) {
+//        Criteria criteria = Criteria.where("items").in(items);
+//        return mongoTemplate.find(new Query(criteria), DhabaModel.class);
+//    }
+	public List<DhabaModel> gettingSpecificItem(List<String> items) {
+        Criteria criteria = Criteria.where("items").in(items);
+        List<DhabaModel> result = mongoTemplate.find(new Query(criteria), DhabaModel.class);
+        return new ArrayList<>(result); // Convert to ArrayList
+    }
 }
