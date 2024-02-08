@@ -96,8 +96,19 @@ public class DhabaService {
 //        return mongoTemplate.find(new Query(criteria), DhabaModel.class);
 //    }
 	public List<DhabaModel> gettingSpecificItem(List<String> items) {
-        Criteria criteria = Criteria.where("items").in(items);
-        List<DhabaModel> result = mongoTemplate.find(new Query(criteria), DhabaModel.class);
-        return new ArrayList<>(result); // Convert to ArrayList
-    }
+		Criteria criteria = Criteria.where("items").in(items);
+		List<DhabaModel> result = mongoTemplate.find(new Query(criteria), DhabaModel.class);
+		return new ArrayList<>(result); // Convert to ArrayList
+	}
+	// Find all entities that have a specific category and are located within a 5 km
+	// radius of a given latitude and longitude:
+	public List<DhabaModel> gettingSpecificCategoryInRange(String str, double latitude, double longitude,
+			double distance) {
+		Criteria infoBased = Criteria.where("category").regex(str).and("location")
+				.nearSphere(new Point(latitude, longitude)).maxDistance(distance);
+		List<DhabaModel> result = mongoTemplate.find(new Query().addCriteria(infoBased), DhabaModel.class);
+		return new ArrayList<>(result);
+
+	}
+
 }

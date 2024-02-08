@@ -2,6 +2,7 @@ package com.code.controller;
 
 import java.util.List;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,14 +86,27 @@ public class DhabaAPIController {
 		return new ResponseEntity<>(filterOut, HttpStatus.FOUND);
 	}
 
-	 @GetMapping("/gettingListOfItems")
-	    public ResponseEntity<List<DhabaModel>> gettingListOfItems(@RequestParam(value = "items") List<String> items) {
-	        List<DhabaModel> gettingSpecificItem = this.dhabaService.gettingSpecificItem(items);
-	        if (!gettingSpecificItem.isEmpty()) {
-	            return new ResponseEntity<>(gettingSpecificItem, HttpStatus.OK);
-	        } else {
-	            throw new RuntimeException("Items in the list were not found");
-	        }
-	    }
+	@GetMapping("/gettingListOfItems")
+	public ResponseEntity<List<DhabaModel>> gettingListOfItems(@RequestParam(value = "items") List<String> items) {
+		List<DhabaModel> gettingSpecificItem = this.dhabaService.gettingSpecificItem(items);
+		if (!gettingSpecificItem.isEmpty()) {
+			return new ResponseEntity<>(gettingSpecificItem, HttpStatus.OK);
+		} else {
+			throw new RuntimeException("Items in the list were not found");
+		}
+	}
+
+	@GetMapping("/gettingCat/{str}/{latitude}/{longitude}/{distance}")
+	public ResponseEntity<List<DhabaModel>> gettingDataBasedOnCateg(@PathVariable String str,
+			@PathVariable double latitude, @PathVariable double longitude, @PathVariable double distance) {
+		List<DhabaModel> gettingSpecificCategoryInRange = this.dhabaService.gettingSpecificCategoryInRange(str,
+				latitude, longitude, distance);
+		if (!gettingSpecificCategoryInRange.isEmpty()) {
+			return new ResponseEntity<>(gettingSpecificCategoryInRange, HttpStatus.OK);
+		} else {
+			throw new RuntimeException("Category in the list with sprcific lat,long were not found");
+		}
+
+	}
 
 }
