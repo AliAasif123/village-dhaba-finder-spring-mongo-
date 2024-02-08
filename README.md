@@ -63,6 +63,20 @@ Request Body:
     "maxLongitude": 77.6046,
     "maxLatitude": 12.9816
 }
+# f)  Retrieves a list of food establishments based on a specified category within a given radius from the provided latitude and longitude coordinates.
+# link : 
+ GET /api/dhabacontroller/gettingCat/Indian%20Cuisine/17.433983/78.382992/2 HTTP/1.1
+# Host: 
+  localhost:4200
+
+# g)
+# link 
+   GET /api/dhabacontroller/gettingListOfItems?items=Chocolate%20Cake&items=Truffles HTTP/1.1
+ # Host: localhost:4200
+# h)
+GET /api/dhabacontroller/regex/o/17.440103/78.364566/7 HTTP/1.1
+# Host: 
+   localhost:4200
 
 # Response
 All endpoints return JSON objects representing Dhabas or relevant data.
